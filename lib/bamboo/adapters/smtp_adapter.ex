@@ -3,31 +3,40 @@ defmodule Bamboo.SmtpAdapter do
   Sends email using SMTP.
   """
   @behaviour Bamboo.Adapter
+  @client Application.get_env(:bamboo, :smtp_client)
 
   alias Bamboo.Email
 
   def deliver(email, config) do
-    get_domain(config)
+    get_relay(config)
+    format_email(email, config)
+    |> @client.send(config)
   end
 
   def handle_config(config) do
-    if Map.get(config, :domain) do
+    if Map.get(config, :relay) do
       config
     else
-      raise_domain_error(config)
+      raise_relay_error(config)
     end
   end
 
-  defp get_domain(config) do
-    case Map.get(config, :domain) do
-      nil -> raise_domain_error(config)
+  def format_email(email, config) do
+    config = Enum.into(config, [])
+    from_address = Email.get_address(email.from)
+    {from_address, email.to, email.text_body}
+  end
+
+  defp get_relay(config) do
+    case Map.get(config, :relay) do
+      nil -> raise_relay_error(config)
       key -> key
     end
   end
 
-  defp raise_domain_error(config) do
+  defp raise_relay_error(config) do
     raise ArgumentError, """
-    There was no domain set for the Smtp adapter.
+    There was no relay set for the Smtp adapter.
 
     * Here are the config options that were passed in:
 

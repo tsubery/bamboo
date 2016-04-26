@@ -60,6 +60,7 @@ defmodule Bamboo.Mixfile do
       {:earmark, ">= 0.0.0", only: :dev},
       {:httpoison, "~> 0.8"},
       {:poison, ">= 1.5.0"},
+      {:gen_smtp, "~> 0.9.0"},
     ]
   end
 end

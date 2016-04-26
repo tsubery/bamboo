@@ -36,7 +36,6 @@ defmodule Bamboo.MandrillAdapter do
 
       #{inspect response, limit: :infinity}
 
-
       Here are the params we sent:
 
       #{inspect filtered_params, limit: :infinity}
